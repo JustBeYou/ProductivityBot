@@ -22,7 +22,7 @@ router.get('/bot/webhook', (req, res) => {
  */
 router.post('/bot/webhook', (req, res) => {
     console.log('POST', req.body, req.body['entry'][0]['changed_fields'], req.body['entry'][0]['messaging']);
-    res.send({status: 'ok'});
+    res.json({status: 'ok'});
 });
 
 module.exports = router;

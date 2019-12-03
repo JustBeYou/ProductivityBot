@@ -22,7 +22,35 @@ router.get('/user/webhook', (req, res) => {
  */
 router.get('/user/webhook', (req, res) => {
     console.log('POST /user/webhook', req.body);
-    res.send({status: 'ok'});
+    res.json({status: 'ok'});
+});
+
+/**
+ * @api {post} /user/:id/activate Activate user account
+ * @apiName UserActivate
+ * @apiGroup User
+ * @apiDescription Return activation token
+ *
+ * @apiParam {String} id User id from the database
+ *
+ * @apiSuccess {String} activation_token The token to be sent to the bot
+ */
+router.post('/user/:id/activate', (req, res) => {
+    res.json({activation_token: 'not implemented'});
+});
+
+/**
+ * @api {post} /user/:id/changed Notify that settings changed
+ * @apiName UserChanged
+ * @apiGroup User
+ * @apiDescription Notify the bot handler that the settings changed
+ *
+ * @apiParam {String} id User id from database
+ *
+ * @apiSuccess {String} status ok or fail
+ */
+router.post('/user/:id/changed', (req, res) => {
+    res.json({status: 'not implemented'});
 });
 
 module.exports = router;
