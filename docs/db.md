@@ -2,10 +2,12 @@ Database
 ===
 
 ## users
-* `facebook_app_id`: user ID from app
-* `facebook_page_id`: user ID from page messages 
-* `assoc_token`: token to associate app and page IDs
-* `activated`: yes or no
+* `id`: user ID (primary key)
+* `facebook_user_app_id`: user ID from app
+* `facebook_user_page_id`: user ID from page messages 
+* `facebook_oauth_id`: temporary ID got from facebook OAuth (null after finding app id)
+* `activation_code`: activation code (null after activation)
+* `activated`: true/false
 * `level`: low, medium or high
-* `status`: on or off
+* `status`: true/false
 * `message`: Any string
