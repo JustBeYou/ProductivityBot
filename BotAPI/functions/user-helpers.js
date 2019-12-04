@@ -18,15 +18,28 @@ function activate_user(db_id, app_id, page_id) {
     database.ref('page_id_map/').set(temp_obj_2);
 }
 
-function send_message(db_id) {
-    database.ref('users/' + db_id + '/facebook_user_page_id').once('value', snapshot => {
-        if (snapshot.exists()) {
-            console.log('sending message to', snapshot.val());
-            bot.sendMessage(snapshot.val(), {text: 'Test message'}); // TODO: read custom message from db
-        } else {
-            console.log("user is probabily not activated", db_id);
-        }
-    });
+async function send_message(db_id) {
+    const status_snapshot = await database.ref('users/' + db_id + '/status').once('value');
+    const status = status_snapshot.val();
+
+    if (status === false) {
+        console.log("the bot is turned off for user", db_id);
+        return ;
+    }
+
+    const page_id_snapshot = await database.ref('users/' + db_id + '/facebook_user_page_id').once('value');
+
+    if (page_id_snapshot.exists()) {
+        const page_id = page_id_snapshot.val();
+
+        const message_snapshot = await database.ref('users/' + db_id + '/message').once('value');
+        const message = message_snapshot.val();
+
+        console.log('sending message to', page_id);
+        bot.sendMessage(page_id, {text: message});
+    } else {
+        console.log("user is probabily not activated", db_id);
+    }
 }
 
 module.exports = {
