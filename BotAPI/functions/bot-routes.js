@@ -43,7 +43,7 @@ bot.on('message', (payload, reply) => {
                 });
         } catch(err) {
             console.log('[ERROR] Invalid token', err);
-            reply({ text: 'Codul este invalid'}, (err, info) => {
+            reply({ text: 'Codul este invalid.'}, (err, info) => {
                 if (err) {
                     console.log('[ERROR] Bot could not reply', err);
                 }
