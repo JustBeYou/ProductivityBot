@@ -7,6 +7,6 @@ firebase.initializeApp({
   databaseURL: 'https://facebookwarninguh.firebaseio.com/'
 });
 
-var database = firebase.database();
+const database = firebase.database();
 
 module.exports = database;
