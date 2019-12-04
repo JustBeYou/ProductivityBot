@@ -1,5 +1,10 @@
 const express = require('express');
 const bot = require('./bot-config');
+const database = require('./db-config');
+const functions = require('firebase-functions');
+const jwt = require('jsonwebtoken');
+const jwt_secret = functions.config().app.jwt_secret;
+const userHelpers = require('./user-helpers');
 
 const router = express.Router();
 
@@ -10,7 +15,7 @@ const router = express.Router();
  * @apiDescription Facebook webhook verify route for user events
  */
 router.get('/user/webhook', (req, res) => {
-    console.log('GET /user/webhook', req.body);
+    console.log('verified', req.body)
     return bot._verify(req, res); // use the same verification as for the messenger bot
 });
 
@@ -20,9 +25,20 @@ router.get('/user/webhook', (req, res) => {
  * @apiGroup FacebookWebhooks
  * @apiDescription Facebook webhook for user events (likes, shares, posts, etc...)
  */
-router.get('/user/webhook', (req, res) => {
-    console.log('POST /user/webhook', req.body);
-    res.json({status: 'ok'});
+router.post('/user/webhook', (req, res) => {
+    console.log('event', req.body);
+    const user_app_id = req.body['entry'][0]['id'];
+
+    database.ref('app_id_map/' + user_app_id).once('value', snapshot => {
+        if (snapshot.exists()) {
+            console.log('send message', snapshot.val());
+            userHelpers.send_message(snapshot.val());
+        } else {
+            console.log('user not found in db', user_app_id);
+        }
+
+        res.json({status: 'ok'});
+    });
 });
 
 /**
@@ -36,7 +52,14 @@ router.get('/user/webhook', (req, res) => {
  * @apiSuccess {String} activation_token The token to be sent to the bot
  */
 router.post('/user/:id/activate', (req, res) => {
-    res.json({activation_token: 'not implemented'});
+    database.ref('users/' + req.params.id).once('value', snapshot => {
+        if (snapshot.exists()){
+            var token = jwt.sign({id: req.params.id}, jwt_secret);
+            res.json({activation_token: token});
+        } else {
+            res.json({activation_token: 'invalid'});
+        }
+    });
 });
 
 /**
