@@ -5,7 +5,6 @@ Database
 * `id`: user ID from facebook oauth
 * `facebook_user_app_id`: user ID from app
 * `facebook_user_page_id`: user ID from page messages 
-* `activation_code`: activation code (null after activation)
 * `activated`: true/false
 * `level`: low, medium or high
 * `status`: true/false
