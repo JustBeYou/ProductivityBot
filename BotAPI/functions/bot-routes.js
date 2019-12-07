@@ -8,16 +8,15 @@ const userHelpers = require('./user-helpers');
 const router = express.Router();
 
 admin.initializeApp({
-  apiKey: functions.config().app.api_key,
-  authDomain:'facebookwarninguh.firebaseapp.com',
-  databaseURL: 'https://facebookwarninguh.firebaseio.com/'
+    apiKey: functions.config().app.api_key,
+    authDomain: 'facebookwarninguh.firebaseapp.com',
+    databaseURL: 'https://facebookwarninguh.firebaseio.com/',
 });
 
 bot.on('message', (payload, reply) => {
-    const text      = payload.message.text;
+    const text = payload.message.text;
     const sender_id = payload.sender.id;
 
-    console.log('MESSAGE FROM', sender_id, 'WITH TEXT', text);
     var words = text.split(' ');
     if (words[0] === 'token') {
         // verify activation token
@@ -27,34 +26,19 @@ bot.on('message', (payload, reply) => {
             admin.auth().getUser(id)
                 .then(user => {
                     var user_app_id = user.providerData[0].uid;
-                    console.log('VERIFIED TOKEN', decoded, user_app_id, sender_id);
                     userHelpers.activate_user(id, user_app_id, sender_id);
 
-                    reply({ text: 'Activare realizata cu succes.'}, (err, info) => {
-                        if (err) {
-                            console.log('[ERROR] Bot could not reply', err);
-                        }
-                    });
+                    reply({text: 'Activare realizata cu succes.'});
 
                     return null;
-                })
-                .catch(error => {
-                    console.log('[ERROR] User not found', error);
                 });
-        } catch(err) {
-            console.log('[ERROR] Invalid token', err);
-            reply({ text: 'Codul este invalid.'}, (err, info) => {
-                if (err) {
-                    console.log('[ERROR] Bot could not reply', err);
-                }
-            });
         }
-    } else {
-        reply({ text: 'Nu te inteleg...'}, (err, info) => {
-            if (err) {
-                console.log('[ERROR] Bot could not reply', err);
-            }
-        });
+        catch (err) {
+            reply({text: 'Codul este invalid.'});
+        }
+    }
+    else {
+        reply({text: 'Nu te inteleg...'});
     }
 });
 
@@ -65,7 +49,6 @@ bot.on('message', (payload, reply) => {
  * @apiDescription Facebook webhook verify route for messenger bot
  */
 router.get('/bot/webhook', (req, res) => {
-    console.log('verified', req.body);
     return bot._verify(req, res);
 });
 
@@ -76,7 +59,6 @@ router.get('/bot/webhook', (req, res) => {
  * @apiDescription Facebook webhook, here arrives all the events about the messenger bot
  */
 router.post('/bot/webhook', (req, res) => {
-    console.log('message', req.body);
     bot._handleMessage(req.body);
     res.json({status: 'ok'});
 });

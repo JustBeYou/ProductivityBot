@@ -1,4 +1,4 @@
-'use strict;'
+'use strict;';
 
 const functions = require('firebase-functions');
 const express = require('express');
@@ -14,7 +14,6 @@ app.use(require('./bot-routes'));
 
 /* Route to check if the service is running */
 app.get('/status', (req, res) => {
-    console.log('running fine');
     res.send({status: 'running fine'});
 });
 

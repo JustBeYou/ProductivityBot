@@ -2,7 +2,6 @@ const database = require('./db-config');
 const bot = require('./bot-config');
 
 function activate_user(db_id, app_id, page_id) {
-    console.log('activate', db_id, app_id, page_id);
     database.ref('users/' + db_id).set({
         activated: true,
         facebook_user_app_id: app_id,
@@ -23,7 +22,6 @@ async function send_message(db_id) {
     const status = status_snapshot.val();
 
     if (status === false) {
-        console.log("the bot is turned off for user", db_id);
         return ;
     }
 
@@ -35,14 +33,11 @@ async function send_message(db_id) {
         const message_snapshot = await database.ref('users/' + db_id + '/message').once('value');
         const message = message_snapshot.val();
 
-        console.log('sending message to', page_id);
         bot.sendMessage(page_id, {text: message});
-    } else {
-        console.log("user is probabily not activated", db_id);
     }
 }
 
 module.exports = {
-    activate_user: activate_user,
-    send_message: send_message
+    activate_user,
+    send_message,
 };

@@ -15,7 +15,6 @@ const router = express.Router();
  * @apiDescription Facebook webhook verify route for user events
  */
 router.get('/user/webhook', (req, res) => {
-    console.log('verified', req.body)
     return bot._verify(req, res); // use the same verification as for the messenger bot
 });
 
@@ -26,15 +25,11 @@ router.get('/user/webhook', (req, res) => {
  * @apiDescription Facebook webhook for user events (likes, shares, posts, etc...)
  */
 router.post('/user/webhook', (req, res) => {
-    console.log('event', req.body);
     const user_app_id = req.body['entry'][0]['id'];
 
     database.ref('app_id_map/' + user_app_id).once('value', snapshot => {
         if (snapshot.exists()) {
-            console.log('send message', snapshot.val());
             userHelpers.send_message(snapshot.val());
-        } else {
-            console.log('user not found in db', user_app_id);
         }
 
         res.json({status: 'ok'});
@@ -53,10 +48,11 @@ router.post('/user/webhook', (req, res) => {
  */
 router.post('/user/:id/activate', (req, res) => {
     database.ref('users/' + req.params.id).once('value', snapshot => {
-        if (snapshot.exists()){
+        if (snapshot.exists()) {
             var token = jwt.sign({id: req.params.id}, jwt_secret);
             res.json({activation_token: token});
-        } else {
+        }
+        else {
             res.json({activation_token: 'invalid'});
         }
     });
