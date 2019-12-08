@@ -41,11 +41,11 @@ router.post('/user/webhook', (req, res) => {
  *
  * @apiSuccess {String}
  */
-router.post('/user/:id/activate', (req, res) => {
+router.post('/user/activate', (req, res) => {
     res.json({status: 'not implemented'});
 });
 
-router.get('/user/:id/activate', (req, res) => {
+router.get('/user/activate', (req, res) => {
     res.json({status: 'not implemented'});
 });
 

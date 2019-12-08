@@ -2,24 +2,24 @@ const database = require('./db-config');
 const bot = require('./bot-config');
 
 function activate_user(db_id, page_id) {
-    database.ref('users/' + db_id).set({
+    database.ref('users/' + db_id).update({
         activated: true,
         facebook_user_page_id: page_id,
     });
 
     var temp_obj = {};
     temp_obj[page_id] = db_id;
-    database.ref('page_id_map/').set(temp_obj);
+    database.ref('page_id_map/').update(temp_obj);
 }
 
 function new_user(db_id, app_id) {
-    database.ref('users/' + db_id).set({
+    database.ref('users/' + db_id).update({
         facebook_user_app_id: app_id,
     });
 
     var temp_obj = {};
     temp_obj[app_id] = db_id;
-    database.ref('app_id_map/').set(temp_obj);
+    database.ref('app_id_map/').update(temp_obj);
 
 }
 

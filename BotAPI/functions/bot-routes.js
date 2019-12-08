@@ -5,7 +5,8 @@ const bot = require('./bot-config');
 const database = require('./db-config');
 const router = express.Router();
 
-const base_url = 'https://us-central1-facebookwarninguh.cloudfunctions.net/app/';
+//const base_url = 'https://us-central1-facebookwarninguh.cloudfunctions.net/app/';
+const login_url = 'https://facebookwarninguh.firebaseapp.com/';
 
 bot.on('message', (sender_id, message, data) => {
     const text = data.text;
@@ -15,7 +16,7 @@ bot.on('message', (sender_id, message, data) => {
             bot.sendButtons({
                 id: sender_id,
                 text: 'Asocieaza-ti contul :D',
-                buttons: [bot.createAccountLinkButton(base_url + 'user/activate')],
+                buttons: [bot.createAccountLinkButton(login_url)],
             });
         }
         else {
