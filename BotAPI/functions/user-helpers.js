@@ -1,20 +1,26 @@
 const database = require('./db-config');
 const bot = require('./bot-config');
 
-function activate_user(db_id, app_id, page_id) {
+function activate_user(db_id, page_id) {
     database.ref('users/' + db_id).set({
         activated: true,
-        facebook_user_app_id: app_id,
         facebook_user_page_id: page_id,
     });
 
-    var temp_obj_1 = {};
-    temp_obj_1[app_id] = db_id;
-    database.ref('app_id_map/').set(temp_obj_1);
+    var temp_obj = {};
+    temp_obj[page_id] = db_id;
+    database.ref('page_id_map/').set(temp_obj);
+}
 
-    var temp_obj_2 = {};
-    temp_obj_2[page_id] = db_id;
-    database.ref('page_id_map/').set(temp_obj_2);
+function new_user(db_id, app_id) {
+    database.ref('users/' + db_id).set({
+        facebook_user_app_id: app_id,
+    });
+
+    var temp_obj = {};
+    temp_obj[app_id] = db_id;
+    database.ref('app_id_map/').set(temp_obj);
+
 }
 
 async function send_message(db_id) {
@@ -33,11 +39,15 @@ async function send_message(db_id) {
         const message_snapshot = await database.ref('users/' + db_id + '/message').once('value');
         const message = message_snapshot.val();
 
-        bot.sendMessage(page_id, {text: message});
+        bot.sendText({
+            id: page_id,
+            text: message,
+        });
     }
 }
 
 module.exports = {
+    new_user,
     activate_user,
     send_message,
 };

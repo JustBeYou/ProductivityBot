@@ -15,14 +15,14 @@
   "dependencies": {
     "babel-eslint": "^10.0.3",
     "body-parser": "^1.19.0",
+    "botly": "^1.6.2",
     "cors": "^2.8.5",
     "eslint-plugin-babel": "^5.3.0",
     "eslint-plugin-mocha": "^6.2.2",
     "firebase": "^7.5.0",
     "firebase-admin": "^8.8.0",
     "firebase-functions": "^3.3.0",
-    "jsonwebtoken": "^8.5.1",
-    "messenger-bot": "^2.5.0"
+    "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {
     "eslint": "^5.12.0",

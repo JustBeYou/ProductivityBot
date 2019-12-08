@@ -1,22 +1,17 @@
 const express = require('express');
-const bot = require('./bot-config');
 const database = require('./db-config');
 const functions = require('firebase-functions');
-const jwt = require('jsonwebtoken');
-const jwt_secret = functions.config().app.jwt_secret;
 const userHelpers = require('./user-helpers');
+const admin = require('firebase-admin');
 
 const router = express.Router();
 
-/**
- * @api {get} /user/webhook Verify user webhook
- * @apiName UserVerifyWebhook
- * @apiGroup FacebookWebhooks
- * @apiDescription Facebook webhook verify route for user events
- */
-router.get('/user/webhook', (req, res) => {
-    return bot._verify(req, res); // use the same verification as for the messenger bot
+admin.initializeApp({
+    apiKey: functions.config().app.api_key,
+    authDomain: 'facebookwarninguh.firebaseapp.com',
+    databaseURL: 'https://facebookwarninguh.firebaseio.com/',
 });
+
 
 /**
  * @api {post} /user/webhook Handle user events
@@ -31,9 +26,9 @@ router.post('/user/webhook', (req, res) => {
         if (snapshot.exists()) {
             userHelpers.send_message(snapshot.val());
         }
-
-        res.json({status: 'ok'});
     });
+
+    res.json({status: 'ok'});
 });
 
 /**
@@ -44,18 +39,14 @@ router.post('/user/webhook', (req, res) => {
  *
  * @apiParam {String} id User id from the database
  *
- * @apiSuccess {String} activation_token The token to be sent to the bot
+ * @apiSuccess {String}
  */
 router.post('/user/:id/activate', (req, res) => {
-    database.ref('users/' + req.params.id).once('value', snapshot => {
-        if (snapshot.exists()) {
-            var token = jwt.sign({id: req.params.id}, jwt_secret);
-            res.json({activation_token: token});
-        }
-        else {
-            res.json({activation_token: 'invalid'});
-        }
-    });
+    res.json({status: 'not implemented'});
+});
+
+router.get('/user/:id/activate', (req, res) => {
+    res.json({status: 'not implemented'});
 });
 
 /**
@@ -69,7 +60,21 @@ router.post('/user/:id/activate', (req, res) => {
  * @apiSuccess {String} status ok or fail
  */
 router.post('/user/:id/changed', (req, res) => {
-    res.json({status: 'not implemented'});
+    const id = req.params.id;
+
+    database.ref('users/' + id + '/facebook_user_app_id').once('value', snapshot => {
+        if (!snapshot.exists()) {
+            admin.auth().getUser(id)
+                .then(user => {
+                    var user_app_id = user.providerData[0].uid;
+                    userHelpers.new_user(id, user_app_id);
+                    return null;
+                });
+
+        }
+    });
+
+    res.json({status: 'ok'});
 });
 
 module.exports = router;
