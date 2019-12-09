@@ -1,7 +1,7 @@
 const express = require('express');
 const bot = require('./bot-config');
 //const functions = require('firebase-functions');
-//const userHelpers = require('./user-helpers');
+const userHelpers = require('./user-helpers');
 const database = require('./db-config');
 const router = express.Router();
 
@@ -34,6 +34,10 @@ bot.on('message', (sender_id, message, data) => {
             }
         }
     });
+});
+
+bot.on('account_link', () => {
+    userHelpers.activate_users();
 });
 
 router.use('/bot/webhook', bot.router());

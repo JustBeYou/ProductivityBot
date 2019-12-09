@@ -15,16 +15,6 @@ app.use(bodyParser.json({
     ),
 }));
 
-app.use((req, res, next) => {
-    var Console = console;
-    Console.log('REQUEST', req.url, req.body);
-    if (req.body['entry'] !== undefined) {
-        Console.log('PAYLOAD', req.body['entry'][0]['changed_fields']);
-    }
-
-    next();
-});
-
 app.use(bodyParser.urlencoded({
     extended: false,
 }));
